@@ -7,18 +7,22 @@ import SwiftUI
 struct GridView: View {
     @StateObject private var dataModel: DataModel = DataModel()
 
+    @State private var doubleTapTrigger = 0
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .center, spacing: 16, content: {
+            LazyVStack(alignment: .center, spacing: 16) {
                 ForEach(dataModel.items) { item in
                     GridItemView(
                         item: item,
                         isLiked: isLikedBinding(itemId: item.id),
-                        doubleTapTrigger: .constant(0) // reserved for future handling
+                        doubleTapTrigger: $doubleTapTrigger
                     )
                 }
-            })
+            }
             .padding()
+        }
+        .overlay {
+            FlyingLikeView(trigger: doubleTapTrigger)
         }
         .navigationBarTitle("Image Gallery")
     }

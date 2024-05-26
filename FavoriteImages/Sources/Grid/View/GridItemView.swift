@@ -4,20 +4,11 @@ See the License.txt file for this sample’s licensing information.
 
 import SwiftUI
 
-enum InlineLikeViewPhase: CaseIterable {
-    case start, end
-    var scale: CGFloat {
-        switch self {
-        case .start: 1
-        case .end: 1.2
-        }
-    }
-}
-
 struct GridItemView: View {
     let item: Item
     @Binding var isLiked: Bool
     @Binding var doubleTapTrigger: Int
+    @State private var alreadyLikedInlineLikeTrigger = 0
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             AsyncImage(
@@ -34,18 +25,27 @@ struct GridItemView: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .contentShape(Rectangle())
             .onTapGesture(count: 2) {
-                isLiked = true
+                if isLiked {
+                    alreadyLikedInlineLikeTrigger += 1
+                } else {
+                    isLiked = true
+                }
                 doubleTapTrigger += 1
             }
 
-            HStack(alignment: .center, spacing: /*@START_MENU_TOKEN@*/nil/*@END_MENU_TOKEN@*/, content: {
+            HStack {
                 LikeView(liked: isLiked)
                     .onTapGesture {
                         isLiked.toggle()
                     }
+                    .phaseAnimator(
+                        [0, 1],
+                        trigger: alreadyLikedInlineLikeTrigger
+                    ) { content, phase in
+                        content.scaleEffect(phase == 0 ? 1 : 1.5)
+                    }
                 Text(likeText)
-                    .animation(nil, value: isLiked)
-            })
+            }
             .frame(height: 32)
         }
     }
