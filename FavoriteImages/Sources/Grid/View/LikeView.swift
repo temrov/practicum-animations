@@ -10,8 +10,9 @@ import SwiftUI
 struct LikeView: View {
     let liked: Bool
     var body: some View {
-        ZStack {
+        if liked {
             likedImage
+        } else {
             notLikedImage
         }
     }
@@ -19,23 +20,17 @@ struct LikeView: View {
     private var likedImage: some View {
         Image(systemName: "heart.fill")
             .foregroundStyle(.red)
-            .scaleEffect(liked ? 1 : 0)
-            .opacity(liked ? 1 : 0)
-            .animation(
-                .spring(
-                    dampingFraction: 0.5,
-                    blendDuration: 0.4
-                ),
-                value: liked
-            )
+            .transition(.scale(scale: 0).combined(with: .opacity).animation(.spring(
+                dampingFraction: 0.5,
+                blendDuration: 0.4
+            )))
     }
 
     private var notLikedImage: some View {
         Image(systemName: "heart")
             .foregroundStyle(.primary)
-            .scaleEffect(liked ? 0 : 1)
-            .opacity(liked ? 0 : 1)
-            .animation(.default, value: liked)
+            .transition(.scale(scale: 0).combined(with: .opacity).animation(.default))
+
     }
 }
 
