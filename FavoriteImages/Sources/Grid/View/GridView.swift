@@ -9,22 +9,24 @@ struct GridView: View {
 
     @State private var doubleTapTrigger = 0
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .center, spacing: 16) {
-                ForEach(dataModel.items) { item in
-                    GridItemView(
-                        item: item,
-                        isLiked: isLikedBinding(itemId: item.id),
-                        doubleTapTrigger: $doubleTapTrigger
-                    )
+        NavigationStack {
+            ScrollView {
+                LazyVStack(alignment: .center, spacing: 16) {
+                    ForEach(dataModel.items) { item in
+                        GridItemView(
+                            item: item,
+                            isLiked: isLikedBinding(itemId: item.id),
+                            doubleTapTrigger: $doubleTapTrigger
+                        )
+                    }
                 }
+                .padding()
             }
-            .padding()
+            .overlay {
+                FlyingLikeView(trigger: doubleTapTrigger)
+            }
+            .navigationBarTitle("Image Gallery")
         }
-        .overlay {
-            FlyingLikeView(trigger: doubleTapTrigger)
-        }
-        .navigationBarTitle("Image Gallery")
     }
 
     private func isLikedBinding(itemId: UUID) -> Binding<Bool> {
