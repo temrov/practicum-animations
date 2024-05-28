@@ -7,7 +7,7 @@ import SwiftUI
 struct GridItemView: View {
     let item: Item
     @Binding var isLiked: Bool
-    @Binding var doubleTapTrigger: Int
+    @Binding var doubleTapTrigger: CGPoint
     @State private var alreadyLikedInlineLikeTrigger = 0
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -24,14 +24,14 @@ struct GridItemView: View {
             .fixedAspectRatio(1, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .contentShape(Rectangle())
-            .onTapGesture(count: 2) {
+            .onTapGesture(count: 2, coordinateSpace: .global, perform: { point in
                 if isLiked {
                     alreadyLikedInlineLikeTrigger += 1
                 } else {
                     isLiked = true
                 }
-                doubleTapTrigger += 1
-            }
+                doubleTapTrigger = point
+            })
 
             HStack {
                 LikeView(liked: isLiked)
@@ -79,6 +79,6 @@ extension View {
             )!
         ),
         isLiked: .constant(false), 
-        doubleTapTrigger: .constant(0)
+        doubleTapTrigger: .constant(.zero)
     )
 }

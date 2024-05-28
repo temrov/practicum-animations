@@ -8,42 +8,27 @@
 import SwiftUI
 
 struct FlyingLikeView: View {
-    let trigger: Int
     var body: some View {
         Image(systemName: "heart.fill")
             .foregroundStyle(.red)
             .font(.system(size: 72))
-            .phaseAnimator(
-                LikeAnimationPhase.allCases,
-                trigger: trigger,
-                content: { content, phase in
-                    content
-                        .scaleEffect(phase.scale)
-                        .opacity(phase.opacity)
-                        .rotationEffect(phase.rotation)
-                }
-            ) { phase in
-                switch phase {
-                case .rotatesLeft, .rotatesRight:
-                    .spring()
-                default:
-                    .easeInOut
-                }
-            }
+
 
     }
 }
 
 enum LikeAnimationPhase: Int, CaseIterable {
+    case prestart
     case start
     case appeared
     case rotatesLeft
     case rotatesRight
     case end
+    case postEnd
 
     var opacity: CGFloat {
         switch self {
-        case .start:
+        case .start, .prestart, .postEnd:
             0
         default:
             1
@@ -51,7 +36,7 @@ enum LikeAnimationPhase: Int, CaseIterable {
     }
     var scale: CGFloat {
         switch self {
-        case .start:
+        case .start, .prestart:
             0.5
         default:
             1
@@ -65,6 +50,15 @@ enum LikeAnimationPhase: Int, CaseIterable {
             .degrees(20)
         default:
             .zero
+        }
+    }
+
+    func offset(startOffset: CGPoint) ->(x: CGFloat, y: CGFloat) {
+        switch self {
+        case .end, .postEnd:
+            (UIScreen.main.bounds.width / 2, 0)
+        default:
+            (startOffset.x, startOffset.y)
         }
     }
 

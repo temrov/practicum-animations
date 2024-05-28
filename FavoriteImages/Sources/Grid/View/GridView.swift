@@ -7,26 +7,50 @@ import SwiftUI
 struct GridView: View {
     @StateObject private var dataModel: DataModel = DataModel()
 
-    @State private var doubleTapTrigger = 0
+    @State private var doubleTapTrigger: CGPoint = .zero
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVStack(alignment: .center, spacing: 16) {
-                    ForEach(dataModel.items) { item in
-                        GridItemView(
-                            item: item,
-                            isLiked: isLikedBinding(itemId: item.id),
-                            doubleTapTrigger: $doubleTapTrigger
-                        )
+        ZStack(alignment: .topLeading, content: {
+            NavigationStack {
+                ScrollView {
+                    LazyVStack(alignment: .center, spacing: 16) {
+                        ForEach(dataModel.items) { item in
+                            GridItemView(
+                                item: item,
+                                isLiked: isLikedBinding(itemId: item.id),
+                                doubleTapTrigger: $doubleTapTrigger
+                            )
+                        }
+                    }
+                    .padding()
+                }
+                .navigationBarTitle("Image Gallery")
+            }
+            FlyingLikeView()
+                .frame(width: .flyingHeartSize, height: .flyingHeartSize)
+                .ignoresSafeArea()
+                .phaseAnimator(
+                    LikeAnimationPhase.allCases,
+                    trigger: doubleTapTrigger,
+                    content: { content, phase in
+                        let offset = phase.offset(startOffset: doubleTapTrigger)
+                        content
+                            .scaleEffect(phase.scale)
+                            .opacity(phase.opacity)
+                            .rotationEffect(phase.rotation)
+                            .offset(x: offset.x - .flyingHeartSize / 2, y: offset.y - .flyingHeartSize)
+                    }
+                ) { phase in
+                    switch phase {
+                    case .rotatesLeft, .rotatesRight:
+                        .spring()
+                    case .postEnd, .start:
+                            .linear(duration: 0.01)
+                    default:
+                        .easeInOut
                     }
                 }
-                .padding()
-            }
-            .overlay {
-                FlyingLikeView(trigger: doubleTapTrigger)
-            }
-            .navigationBarTitle("Image Gallery")
-        }
+        })
+
     }
 
     private func isLikedBinding(itemId: UUID) -> Binding<Bool> {
@@ -49,3 +73,7 @@ struct GridView_Previews: PreviewProvider {
     }
 }
  
+private extension CGFloat {
+
+    static let flyingHeartSize: CGFloat = 100
+}
