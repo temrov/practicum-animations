@@ -8,19 +8,22 @@ struct GridView: View {
     @StateObject private var dataModel: DataModel = DataModel()
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .center, spacing: 16, content: {
-                ForEach(dataModel.items) { item in
-                    GridItemView(
-                        item: item,
-                        isLiked: isLikedBinding(itemId: item.id),
-                        doubleTapTrigger: .constant(0) // reserved for future handling
-                    )
-                }
-            })
-            .padding()
+        NavigationStack {
+            ScrollView {
+                LazyVStack(alignment: .center, spacing: 16, content: {
+                    ForEach(dataModel.items) { item in
+                        GridItemView(
+                            item: item,
+                            isLiked: isLikedBinding(itemId: item.id),
+                            doubleTapTrigger: .constant(0) // reserved for future handling
+                        )
+                    }
+                })
+                .padding()
+            }
+            .navigationBarTitle("Image Gallery")
         }
-        .navigationBarTitle("Image Gallery")
+
     }
 
     private func isLikedBinding(itemId: UUID) -> Binding<Bool> {
