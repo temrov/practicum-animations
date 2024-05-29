@@ -31,6 +31,7 @@ struct GridItemView: View {
                     isLiked = true
                 }
                 doubleTapTrigger = point
+                print("Double tap \(point)")
             })
 
             HStack {

@@ -26,7 +26,7 @@ struct GridView: View {
                 .navigationBarTitle("Image Gallery")
             }
             FlyingLikeView()
-                .frame(width: .flyingHeartSize, height: .flyingHeartSize)
+                .frame(width: .flyingHeartWidth, height: .flyingHeartHeight)
                 .ignoresSafeArea()
                 .phaseAnimator(
                     LikeAnimationPhase.allCases,
@@ -37,14 +37,14 @@ struct GridView: View {
                             .scaleEffect(phase.scale)
                             .opacity(phase.opacity)
                             .rotationEffect(phase.rotation)
-                            .offset(x: offset.x - .flyingHeartSize / 2, y: offset.y - .flyingHeartSize)
+                            .offset(x: offset.x - .flyingHeartWidth / 2, y: offset.y - 1.5 * .flyingHeartHeight)
                     }
                 ) { phase in
                     switch phase {
                     case .rotatesLeft, .rotatesRight:
                         .spring()
-                    case .postEnd, .start:
-                            .linear(duration: 0.01)
+                    case .start:
+                        .linear(duration: 0.01)
                     default:
                         .easeInOut
                     }
@@ -72,8 +72,9 @@ struct GridView_Previews: PreviewProvider {
             .previewDevice("iPad (8th generation)")
     }
 }
- 
-private extension CGFloat {
 
-    static let flyingHeartSize: CGFloat = 100
+extension CGFloat {
+
+    static let flyingHeartWidth: CGFloat = 70
+    static let flyingHeartHeight: CGFloat = 64
 }

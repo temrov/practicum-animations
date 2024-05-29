@@ -56,7 +56,7 @@ enum LikeAnimationPhase: Int, CaseIterable {
     func offset(startOffset: CGPoint) ->(x: CGFloat, y: CGFloat) {
         switch self {
         case .end, .postEnd:
-            (UIScreen.main.bounds.width / 2, 0)
+            (UIScreen.main.bounds.width / 2, -.flyingHeartHeight)
         default:
             (startOffset.x, startOffset.y)
         }
